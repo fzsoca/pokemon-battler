@@ -1,13 +1,12 @@
-import Image from 'next/image';
-import MainLayout from '@/components/MainLayout';
-import { GetServerSideProps } from 'next';
-import axios from 'axios';
+import Image from "next/image";
+import MainLayout from "@/components/MainLayout";
+import { GetServerSideProps } from "next";
+import { prisma } from "@/lib/prisma";
 
 interface Pokemon {
-  id: number;
+  id: string;
   image: string;
   name: string;
-  description: string;
 }
 
 interface HomeProps {
@@ -16,7 +15,7 @@ interface HomeProps {
 
 export default function Home({ pokemonData }: HomeProps) {
   const handleClick = async (id: string) => {
-    console.log('clicked', id);
+    console.log("clicked", id);
   };
 
   return (
@@ -47,21 +46,65 @@ export default function Home({ pokemonData }: HomeProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const pokemon1 = await axios.get('https://pokeapi.co/api/v2/pokemon/1');
-  const pokemon2 = await axios.get('https://pokeapi.co/api/v2/pokemon/2');
+function generateRandomNumber(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-  const pokemons: Pokemon[] = [pokemon1.data, pokemon2.data].map((pokemon) => {
-    return {
-      id: pokemon.id,
-      image: pokemon.sprites.other['official-artwork'].front_default,
-      name: pokemon.name,
-      description: pokemon.species.url,
-    };
-  });
+function generateTwoDifferentRandomNumbers(min: number, max: number) {
+  let number1 = generateRandomNumber(min, max);
+  let number2 = generateRandomNumber(min, max);
+
+  // Ensure that the second number is different from the first one
+  while (number2 === number1) {
+    number2 = generateRandomNumber(min, max);
+  }
+
+  return [number1, number2];
+}
+
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  //Generate random number between 1 and 100
+  const [randomNumber1, randomNumber2] = generateTwoDifferentRandomNumbers(
+    1,
+    100
+  );
+
+  const promises = [
+    prisma.pokemon.findUnique({
+      where: {
+        pokedexId: randomNumber1,
+      },
+      select: {
+        id: true,
+        imgUrl: true,
+        name: true,
+      },
+    }),
+    prisma.pokemon.findUnique({
+      where: {
+        pokedexId: randomNumber2,
+      },
+      select: {
+        id: true,
+        imgUrl: true,
+        name: true,
+      },
+    }),
+  ];
+
+  const pokemons = await Promise.all(promises);
+
+  if (!pokemons[0] || !pokemons[1]) {
+    throw new Error("Pokemon not found");
+  }
+
   return {
     props: {
-      pokemonData: pokemons,
+      pokemonData: pokemons.map((pokemon: any) => ({
+        id: pokemon?.id,
+        image: pokemon?.imgUrl,
+        name: pokemon?.name,
+      })),
     },
   };
 };

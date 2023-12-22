@@ -1,12 +1,11 @@
-import { GetServerSideProps } from 'next';
-import axios from 'axios';
-import MainLayout from '@/components/MainLayout';
+import { GetServerSideProps } from "next";
+import axios from "axios";
+import MainLayout from "@/components/MainLayout";
+import { prisma } from "@/lib/prisma";
 
 interface Pokemon {
-  id: number;
+  id: string;
   name: string;
-  type: string;
-  level: number;
   votes: number;
 }
 
@@ -22,19 +21,15 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ pokemons }) => {
         <table className="table-auto w-full">
           <thead>
             <tr>
-              <th className="px-4 py-2">ID</th>
               <th className="px-4 py-2">Name</th>
-              <th className="px-4 py-2">Type</th>
-              <th className="px-4 py-2">Level</th>
+              <th className="px-4 py-2">Votes</th>
             </tr>
           </thead>
           <tbody>
             {pokemons.map((pokemon) => (
               <tr key={pokemon.id}>
-                <td className="border px-4 py-2">{pokemon.id}</td>
                 <td className="border px-4 py-2">{pokemon.name}</td>
-                <td className="border px-4 py-2">{pokemon.type}</td>
-                <td className="border px-4 py-2">{pokemon.level}</td>
+                <td className="border px-4 py-2">{pokemon.votes}</td>
               </tr>
             ))}
           </tbody>
@@ -47,9 +42,18 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ pokemons }) => {
 export const getServerSideProps: GetServerSideProps<
   LeaderboardProps
 > = async () => {
-  const response = await axios.get('https://pokeapi.co/api/v2/pokemon');
+  const pokemons = await prisma.pokemon.findMany({
+    select: {
+      id: true,
+      name: true,
+      votes: true,
+    },
+    orderBy: {
+      votes: "desc",
+    },
+    take: 10,
+  });
 
-  const pokemons: Pokemon[] = response.data.results;
   return {
     props: {
       pokemons,

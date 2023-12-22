@@ -1,4 +1,5 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { prisma } from "@/lib/prisma";
+import { NextApiRequest, NextApiResponse } from "next";
 //import prisma from '../../../prisma'; // Assuming you have a Prisma client instance
 
 export default async function handler(
@@ -6,13 +7,11 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    res.status(200).json({ message: 'Hello World' });
+    const pokemon = await prisma.pokemon.findMany(); // Fetch all Pokemon from the database
 
-    //const pokemon = await prisma.pokemon.findMany(); // Fetch all Pokemon from the database
-
-    //  res.status(200).json(pokemon);
+    res.status(200).json(pokemon);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
+    res.status(500).json({ message: "Internal server error" });
   }
 }
