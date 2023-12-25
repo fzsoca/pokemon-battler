@@ -56,9 +56,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     });
 
-    const prismaData = await Promise.all(prismaPromises);
+    // Reset the database
+    await prisma.pokemon.deleteMany({});
 
-    console.log(pokemonData);
+    await Promise.all(prismaPromises);
 
     res.status(200).json({ message: "Pokémon synced successfully" });
   } catch (error) {

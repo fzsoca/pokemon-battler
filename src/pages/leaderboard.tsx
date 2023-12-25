@@ -3,14 +3,14 @@ import axios from "axios";
 import MainLayout from "@/components/MainLayout";
 import { prisma } from "@/lib/prisma";
 
-interface Pokemon {
+interface LeaderboardPokemon {
   id: string;
   name: string;
   votes: number;
 }
 
 interface LeaderboardProps {
-  pokemons: Pokemon[];
+  pokemons: LeaderboardPokemon[];
 }
 
 const Leaderboard: React.FC<LeaderboardProps> = ({ pokemons }) => {
