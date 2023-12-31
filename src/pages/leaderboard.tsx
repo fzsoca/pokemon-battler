@@ -1,5 +1,4 @@
 import { GetServerSideProps } from "next";
-import axios from "axios";
 import MainLayout from "@/components/MainLayout";
 import { prisma } from "@/lib/prisma";
 
