@@ -19,6 +19,9 @@ export default async function handler(
           name: true,
           imgUrl: true,
           pokedexId: true,
+          type: true,
+          height: true,
+          weight: true,
         },
       });
       res.status(200).json(pokemon);

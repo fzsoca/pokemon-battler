@@ -1,12 +1,7 @@
 import { GetServerSideProps } from "next";
 import MainLayout from "@/components/MainLayout";
 import { prisma } from "@/lib/prisma";
-
-interface LeaderboardPokemon {
-  id: string;
-  name: string;
-  votes: number;
-}
+import { LeaderboardPokemon } from "@/lib/types";
 
 interface LeaderboardProps {
   pokemons: LeaderboardPokemon[];

@@ -2,12 +2,7 @@ import Image from "next/image";
 import MainLayout from "@/components/MainLayout";
 import axios from "axios";
 import { useEffect, useState } from "react";
-
-interface ClientPokemon {
-  pokedexId: string;
-  imgUrl: string;
-  name: string;
-}
+import { CardPokemon } from "@/lib/types";
 
 export default function Home() {
   const fetchPokemons = async () => {
@@ -48,7 +43,7 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [pokemons, setPokemons] = useState<ClientPokemon[]>([]);
+  const [pokemons, setPokemons] = useState<CardPokemon[]>([]);
 
   useEffect(() => {
     fetchPokemons();
@@ -68,17 +63,29 @@ export default function Home() {
         <div className="flex mt-6">
           {pokemons.map((pokemon) => (
             <div key={pokemon.pokedexId} className="w-1/2 p-4">
-              <div
-                className="bg-white p-4 rounded-lg shadow-lg flex justify-center flex-col items-center cursor-pointer hover:shadow-lg hover:shadow-neutral-50"
-                onClick={() => handleClick(pokemon.pokedexId.toString())}
-              >
-                <Image
-                  src={pokemon.imgUrl}
-                  alt={pokemon.name}
-                  width={200}
-                  height={200}
-                />
-                <p className="text-xl font-bold text-black">{pokemon.name}</p>
+              <div className="flip-card">
+                <div className="flip-card-inner">
+                  <div className="flip-card-front">
+                    <div
+                      className="bg-white p-4 rounded-lg shadow-lg flex justify-center flex-col items-center cursor-pointer hover:shadow-lg hover:shadow-neutral-50"
+                      onClick={() => handleClick(pokemon.pokedexId.toString())}
+                    >
+                      <Image
+                        src={pokemon.imgUrl}
+                        alt={pokemon.name}
+                        width={200}
+                        height={200}
+                      />
+                    </div>
+                  </div>
+                  <div className="flip-card-back">
+                    <div className="bg-white p-4 rounded-lg shadow-lg flex justify-center flex-col items-center">
+                      <p className="text-xl font-bold text-black">
+                        {pokemon.name}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ))}
