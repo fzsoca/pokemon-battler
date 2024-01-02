@@ -1,9 +1,9 @@
-import Image from 'next/image';
-import MainLayout from '@/components/MainLayout';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import { CardPokemon } from '@/lib/types';
-import Modal from '@/components/Modal';
+import Image from "next/image";
+import MainLayout from "@/components/MainLayout";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import { CardPokemon } from "@/lib/types";
+import Modal from "@/components/Modal";
 
 export default function Home() {
   const fetchPokemons = async () => {
@@ -43,7 +43,7 @@ export default function Home() {
   };
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [pokemons, setPokemons] = useState<CardPokemon[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [modalData, setModalData] = useState<CardPokemon | null>(null);
@@ -55,9 +55,24 @@ export default function Home() {
   return (
     <>
       <Modal isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <p>{modalData?.height}</p>
-        <p>{modalData?.weight}</p>
-        <p>{modalData?.type}</p>
+        <div className="flex gap-6 flex-col items-center bg-white text-black min-w- min-w-64">
+          <h1 className="text-3xl font-bold">Details</h1>
+          <div className="flex flex-col items-start w-full">
+            <p className=" text-xl">
+              <span className="font-bold">Name: </span>
+              {modalData?.name}
+            </p>
+            <p className=" text-xl">
+              <span className="font-bold">Height:</span> {modalData?.height}
+            </p>
+            <p className=" text-xl">
+              <span className="font-bold">Weight:</span> {modalData?.weight}
+            </p>
+            <p className="text-xl">
+              <span className="font-bold">Types:</span> {modalData?.type}
+            </p>
+          </div>
+        </div>
       </Modal>
       <MainLayout error={error}>
         <h2 className="text-2xl text-center">Choose your favorite!</h2>
@@ -69,7 +84,7 @@ export default function Home() {
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-neutral-500"></div>
           </div>
         ) : (
-          <div className="flex mt-6">
+          <div className="flex flex-col items-center sm:flex-row mt-6">
             {pokemons.map((pokemon) => (
               <div key={pokemon.pokedexId} className="w-1/2 p-4">
                 <div
