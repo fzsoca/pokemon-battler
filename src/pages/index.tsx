@@ -1,6 +1,6 @@
 import Image from "next/image";
 import MainLayout from "@/components/MainLayout";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import { CardPokemon } from "@/lib/types";
 import Modal from "@/components/Modal";
@@ -24,7 +24,12 @@ export default function Home() {
       const pokemons = await Promise.all(promises);
       setPokemons(pokemons.map((axiosResp) => axiosResp.data));
     } catch (error) {
-      setError(`${error}`);
+      if (
+        axios.isAxiosError(error) &&
+        (error as AxiosError)?.response?.status === 404
+      ) {
+        setError("No pokemons found");
+      }
     } finally {
       setLoading(false);
     }

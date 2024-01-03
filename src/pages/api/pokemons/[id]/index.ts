@@ -24,6 +24,7 @@ export default async function handler(
           weight: true,
         },
       });
+      if (!pokemon) res.status(404).json({ error: "Pokemon not found" });
       res.status(200).json(pokemon);
     } catch (error) {
       console.error(error);
