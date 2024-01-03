@@ -6,6 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 RUN npm install
+RUN npx prisma generate
 
 COPY . .
 
@@ -21,4 +22,4 @@ ENV PGPORT=5432
 RUN apk add --no-cache postgresql-client
 
 # Start the Next.js application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "dev:migrate:start"]
