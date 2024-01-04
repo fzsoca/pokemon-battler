@@ -1,9 +1,9 @@
-import Image from "next/image";
-import MainLayout from "@/components/MainLayout";
-import axios, { AxiosError } from "axios";
-import { useEffect, useState } from "react";
-import { CardPokemon } from "@/lib/types";
-import Modal from "@/components/Modal";
+import Image from 'next/image';
+import MainLayout from '@/components/MainLayout';
+import axios, { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
+import { CardPokemon } from '@/lib/types';
+import Modal from '@/components/Modal';
 
 export default function Home() {
   const fetchPokemons = async () => {
@@ -28,7 +28,9 @@ export default function Home() {
         axios.isAxiosError(error) &&
         (error as AxiosError)?.response?.status === 404
       ) {
-        setError("No pokemons found");
+        setError('No pokemons found');
+      } else {
+        setError('Something went wrong');
       }
     } finally {
       setLoading(false);
@@ -42,13 +44,17 @@ export default function Home() {
         `${process.env.NEXT_PUBLIC_APP_URL}/api/pokemons/${id}/vote`
       );
     } catch (error) {
-      setError(`${error}`);
+      if (axios.isAxiosError(error)) {
+        setError(error?.response?.data?.error || 'Something went wrong');
+      } else {
+        setError('Something went wrong');
+      }
     }
     await fetchPokemons();
   };
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [pokemons, setPokemons] = useState<CardPokemon[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [modalData, setModalData] = useState<CardPokemon | null>(null);
